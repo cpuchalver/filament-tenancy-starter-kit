@@ -64,6 +64,14 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
         return $this->hasMany(Team::class, 'owner_id');
     }
 
+    /**
+     * Owned teams are deleted with their owner, so ownership must be transferred first.
+     */
+    public function canBeDeleted(): bool
+    {
+        return ($this->owned_teams_count ?? $this->ownedTeams()->count()) === 0;
+    }
+
     /** @return Collection<int, Team> */
     public function getTenants(Panel $panel): Collection
     {

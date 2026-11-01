@@ -2,7 +2,7 @@
 
 namespace App\Filament\App\Pages\Tenancy;
 
-use App\Filament\App\Schemas\TeamForm;
+use App\Filament\Schemas\TeamFields;
 use Filament\Pages\Tenancy\EditTenantProfile;
 use Filament\Schemas\Schema;
 
@@ -16,7 +16,7 @@ class EditTeamProfile extends EditTenantProfile
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->components(TeamForm::components());
+            ->components(TeamFields::components());
     }
 
     protected function getRedirectUrl(): ?string
