@@ -45,4 +45,12 @@ class Team extends Model
     {
         return $this->owner()->is($user);
     }
+
+    public function assignOwner(User $owner): void
+    {
+        $this->owner()->associate($owner);
+        $this->save();
+
+        $this->users()->syncWithoutDetaching([$owner->getKey()]);
+    }
 }

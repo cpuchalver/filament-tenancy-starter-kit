@@ -2,7 +2,7 @@
 
 namespace App\Filament\App\Pages\Tenancy;
 
-use App\Filament\App\Schemas\TeamForm;
+use App\Filament\Schemas\TeamFields;
 use App\Models\Team;
 use Filament\Pages\Tenancy\RegisterTenant;
 use Filament\Schemas\Schema;
@@ -18,16 +18,13 @@ class RegisterTeam extends RegisterTenant
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->components(TeamForm::components());
+            ->components(TeamFields::components());
     }
 
     protected function handleRegistration(array $data): Team
     {
         $team = new Team($data);
-        $team->owner()->associate(Auth::user());
-        $team->save();
-
-        $team->users()->attach(Auth::user());
+        $team->assignOwner(Auth::user());
 
         return $team;
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\App\Schemas;
+namespace App\Filament\Schemas;
 
 use App\Models\Team;
 use Filament\Forms\Components\TextInput;
@@ -9,7 +9,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Str;
 
-class TeamForm
+class TeamFields
 {
     /** @return array<int, Component> */
     public static function components(): array
