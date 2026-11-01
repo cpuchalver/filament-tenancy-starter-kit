@@ -6,6 +6,7 @@ use App\Models\Team;
 use App\Models\User;
 use Filament\Actions\AttachAction;
 use Filament\Actions\DetachAction;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -38,11 +39,20 @@ class UsersRelationManager extends RelationManager
             ])
             ->headerActions([
                 AttachAction::make()
-                    ->recordSelectSearchColumns(['name', 'email']),
+                    ->recordSelectSearchColumns(['name', 'email'])
+                    ->successNotification(fn (Notification $notification, array $data): Notification => $notification
+                        ->title(__('Member added'))
+                        ->body(__(':name can now access :team.', [
+                            'name' => User::find($data['recordId'])?->name,
+                            'team' => $this->ownerRecord->name,
+                        ]))),
             ])
             ->recordActions([
                 DetachAction::make()
-                    ->hidden(fn (User $record): bool => $this->ownerRecord->isOwnedBy($record)),
+                    ->hidden(fn (User $record): bool => $this->ownerRecord->isOwnedBy($record))
+                    ->successNotification(fn (Notification $notification, User $record): Notification => $notification
+                        ->title(__('Member removed'))
+                        ->body(__(':name no longer has access to :team.', ['name' => $record->name, 'team' => $this->ownerRecord->name]))),
             ]);
     }
 }

@@ -7,6 +7,7 @@ use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Pages\Dashboard;
 use Filament\Pages\SimplePage;
 use Filament\Schemas\Components\Actions;
@@ -199,7 +200,7 @@ class AcceptInvitation extends SimplePage
             $user->markEmailAsVerified();
         }
 
-        $this->redirect(Dashboard::getUrl(panel: 'app', tenant: $invitation->accept($user)));
+        $this->joinTeam($invitation, $user);
     }
 
     public function register(): void
@@ -222,7 +223,20 @@ class AcceptInvitation extends SimplePage
         Filament::auth()->login($user);
         session()->regenerate();
 
-        $this->redirect(Dashboard::getUrl(panel: 'app', tenant: $invitation->accept($user)));
+        $this->joinTeam($invitation, $user);
+    }
+
+    protected function joinTeam(TeamInvitation $invitation, User $user): void
+    {
+        $team = $invitation->accept($user);
+
+        Notification::make()
+            ->title(__('Welcome to :team', ['team' => $team->name]))
+            ->body(__('You are now a member of the team.'))
+            ->success()
+            ->send();
+
+        $this->redirect(Dashboard::getUrl(panel: 'app', tenant: $team));
     }
 
     protected function invitedUserExists(): bool

@@ -2,9 +2,11 @@
 
 namespace App\Filament\Admin\Resources\Users\Tables;
 
+use App\Filament\Admin\Resources\Users\UserResource;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
@@ -52,7 +54,8 @@ class UsersTable
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make()
-                    ->hidden(fn (User $record): bool => $record->is(Auth::user()) || ! $record->canBeDeleted()),
+                    ->hidden(fn (User $record): bool => $record->is(Auth::user()) || ! $record->canBeDeleted())
+                    ->successNotification(fn (User $record): Notification => UserResource::getDeletedNotification($record)),
             ]);
     }
 }

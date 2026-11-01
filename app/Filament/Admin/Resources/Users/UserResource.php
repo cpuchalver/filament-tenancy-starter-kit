@@ -9,6 +9,7 @@ use App\Filament\Admin\Resources\Users\Schemas\UserForm;
 use App\Filament\Admin\Resources\Users\Tables\UsersTable;
 use App\Models\User;
 use BackedEnum;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -43,6 +44,14 @@ class UserResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->withCount('ownedTeams');
+    }
+
+    public static function getDeletedNotification(User $record): Notification
+    {
+        return Notification::make()
+            ->title(__('User deleted'))
+            ->body(__(':email no longer has an account.', ['email' => $record->email]))
+            ->success();
     }
 
     public static function getRelations(): array
