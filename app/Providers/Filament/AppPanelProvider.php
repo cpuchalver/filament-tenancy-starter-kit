@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\App\Pages\AcceptInvitation;
 use App\Filament\App\Pages\Tenancy\EditTeamProfile;
 use App\Filament\App\Pages\Tenancy\RegisterTeam;
 use App\Models\Team;
@@ -21,6 +22,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Route;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AppPanelProvider extends PanelProvider
@@ -39,6 +41,7 @@ class AppPanelProvider extends PanelProvider
             ->tenant(Team::class, slugAttribute: 'slug')
             ->tenantRegistration(RegisterTeam::class)
             ->tenantProfile(EditTeamProfile::class)
+            ->routes(fn () => Route::get('/invitations/{token}', AcceptInvitation::class)->name('invitations.accept'))
             ->colors([
                 'primary' => Color::Blue,
                 'gray' => Color::Gray,
