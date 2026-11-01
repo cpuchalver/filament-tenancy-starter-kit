@@ -22,6 +22,11 @@ class TeamPolicy
         return $team->isOwnedBy($user);
     }
 
+    public function manageMembers(User $user, Team $team): bool
+    {
+        return $team->isOwnedBy($user);
+    }
+
     public function delete(User $user, Team $team): bool
     {
         return $team->isOwnedBy($user);
