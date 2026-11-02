@@ -1,58 +1,61 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Filament Tenancy Starter Kit
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel starter kit for multi-team applications built with [Filament](https://filamentphp.com). Users belong to teams, each team has an owner, and an admin panel manages the whole application.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Two panels**
+  - `/app`: the team panel. Each team is a Filament tenant, and users switch between the teams they belong to.
+  - `/admin`: the admin panel, restricted to users flagged `is_admin`.
+- **Teams**: any user can create a team and becomes its owner. Members can view the team; only the owner can rename it, change its slug or delete it.
+- **Invitations**: from the Members page, the owner invites people by email, removes members, and resends or revokes pending invitations. The emailed link works for new users, who create their account, and for existing users, who sign in first. Links expire after 7 days. Only a hash of the token is stored.
+- **Administration**: Team and User resources manage every team, its owner and members, and each user's admin right. Admins cannot revoke their own right or delete themselves, and users who own teams cannot be deleted.
+- **Private by default**: every 403 is rendered as a 404, so the app never confirms that a forbidden resource exists.
+- **Consistent notifications**: every toast has a short title and, when useful, a one-sentence body.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+There is no public sign-up. Accounts are created by an admin or by accepting an invitation.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Stack
 
-## Learning Laravel
+- PHP 8.3+
+- Laravel 13
+- Filament 5
+- Pest 5
+- SQLite by default
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Getting started
 
 ```bash
-composer require laravel/boost --dev
+git clone https://github.com/cpuchalver/filament-tenancy-starter-kit.git
+cd filament-tenancy-starter-kit
 
-php artisan boost:install
+composer run setup
+php artisan db:seed
+composer run dev
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+`composer run setup` installs the dependencies, creates `.env`, generates the app key, runs the migrations and builds the assets.
 
-## Contributing
+The seeder creates an admin user who owns a demo team:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Email              | Password   |
+|--------------------|------------|
+| `demo@example.com` | `password` |
 
-## Code of Conduct
+Sign in at `/app` for the team panel or `/admin` for the admin panel.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Mail, queue and scheduler
 
-## Security Vulnerabilities
+- Invitation emails are queued. `composer run dev` starts a queue worker; in production, run one with `php artisan queue:work`.
+- Mail is written to the log by default (`MAIL_MAILER=log`). Set the `MAIL_*` variables in `.env` to send real emails.
+- Expired invitations are deleted by `model:prune`, scheduled daily. In production, run the scheduler with `php artisan schedule:run` from cron.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Tests
+
+```bash
+composer test
+```
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Open-sourced under the [MIT license](https://opensource.org/licenses/MIT).
