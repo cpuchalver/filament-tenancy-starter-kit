@@ -43,7 +43,8 @@ class TeamsTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->successNotificationTitle(__('Teams deleted')),
                 ]),
             ]);
     }

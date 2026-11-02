@@ -64,7 +64,8 @@ class PendingInvitations extends TableWidget
                         $this->team()->invite($record->email, Auth::user());
 
                         Notification::make()
-                            ->title(__('Invitation sent again to :email.', ['email' => $record->email]))
+                            ->title(__('Invitation resent'))
+                            ->body(__('A new link was sent to :email. The previous link no longer works.', ['email' => $record->email]))
                             ->success()
                             ->send();
                     }),
@@ -79,7 +80,8 @@ class PendingInvitations extends TableWidget
                         $record->delete();
 
                         Notification::make()
-                            ->title(__('Invitation revoked.'))
+                            ->title(__('Invitation revoked'))
+                            ->body(__('The link sent to :email no longer works.', ['email' => $record->email]))
                             ->success()
                             ->send();
                     }),

@@ -4,6 +4,7 @@ namespace App\Filament\App\Pages;
 
 use App\Filament\App\Widgets\PendingInvitations;
 use App\Models\Team;
+use App\Models\TeamInvitation;
 use App\Models\User;
 use BackedEnum;
 use Closure;
@@ -90,7 +91,8 @@ class Members extends Page implements HasTable
                         $this->team()->removeMember($record);
 
                         Notification::make()
-                            ->title(__(':name has been removed from the team.', ['name' => $record->name]))
+                            ->title(__('Member removed'))
+                            ->body(__(':name no longer has access to :team.', ['name' => $record->name, 'team' => $this->team()->name]))
                             ->success()
                             ->send();
                     }),
@@ -123,7 +125,8 @@ class Members extends Page implements HasTable
                 $this->dispatch('invitations-updated');
 
                 Notification::make()
-                    ->title(__('Invitation sent to :email.', ['email' => $data['email']]))
+                    ->title(__('Invitation sent'))
+                    ->body(__(':email will receive a link valid for :days days.', ['email' => $data['email'], 'days' => TeamInvitation::ValidForDays]))
                     ->success()
                     ->send();
             });
