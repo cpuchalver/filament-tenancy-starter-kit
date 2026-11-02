@@ -18,13 +18,13 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        $user = User::factory()->create([
+        $user = User::factory()->admin()->create([
             'name' => 'Demo User',
             'email' => 'demo@example.com',
         ]);
-        $user->teams()->attach(Team::factory()->create([
+        Team::factory()->ownedBy($user)->create([
             'name' => 'Demo Team',
             'slug' => 'demo-team',
-        ]));
+        ]);
     }
 }
